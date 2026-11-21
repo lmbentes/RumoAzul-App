@@ -1,0 +1,580 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0B5F63">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Colheitas">
+<title>Colheitas</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="icon" href="icons/icon-192.png">
+<style>
+:root{--bg:#F3F5F4;--card:#fff;--line:#DCE3E1;--line2:#EDF1F0;--ink:#13201F;--mut:#55625F;--mut2:#3B4846;--acc:#0B5F63;--acc2:#08474A;--accbg:#E0F0F0;--ok:#1B6B47;--warn:#7A4300;--warnbg:#FFF8EC;--warnline:#E2B76A;--gray:#E3E8E7}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Inter",system-ui,sans-serif;font-size:16px;-webkit-text-size-adjust:100%}
+a{color:var(--acc)}
+button,input,select,textarea{font:inherit;color:inherit}
+#app{min-height:100vh;display:flex;flex-direction:column}
+.top{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid var(--line);padding:calc(env(safe-area-inset-top) + 12px) 20px 12px;display:flex;flex-direction:column;gap:6px}
+.top .row{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+.back{font-size:16px;font-weight:500;text-decoration:none;min-height:36px;display:inline-flex;align-items:center;background:none;border:0;padding:0;color:var(--acc);align-self:flex-start}
+h1{margin:0;font-size:26px;font-weight:700;letter-spacing:-.02em}
+.sub{margin:0;font-size:14px;color:var(--mut)}
+.main{flex:1;padding:16px;display:flex;flex-direction:column;gap:12px;padding-bottom:calc(env(safe-area-inset-bottom) + 24px)}
+.withnav .main{padding-bottom:calc(env(safe-area-inset-bottom) + 96px)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.card.sel{border:2px solid var(--acc);padding:13px 15px}
+.lbl{font-size:12px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--mut)}
+.chip{font-size:13px;font-weight:600;padding:4px 10px;border-radius:999px;white-space:nowrap}
+.chip.teal{background:var(--accbg);color:var(--acc2)}.chip.amber{background:#FFF1DB;color:var(--warn)}.chip.gray{background:var(--gray);color:var(--mut2)}
+.btn{min-height:52px;border-radius:12px;border:0;background:var(--acc);color:#fff;font-weight:600;font-size:16px;padding:0 16px;width:100%;cursor:pointer}
+.btn.sm{min-height:44px;width:auto;font-size:15px}
+.btn.out{background:#fff;color:var(--acc);border:1.5px solid var(--acc)}
+.btn.dark{background:var(--ink)}
+.btn.dash{background:transparent;color:var(--acc);border:1.5px dashed #8FA3A0}
+.btn.danger{background:#fff;color:#A32D2D;border:1.5px solid #E0B4B4}
+.btn:disabled{background:#C9D3D1;color:var(--mut2);border:0}
+.link{background:none;border:0;color:var(--acc);font-weight:600;font-size:15px;padding:0;min-height:44px;text-align:left;cursor:pointer}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.fld{display:flex;flex-direction:column;gap:6px}
+input[type=text],input[type=date],input[type=datetime-local],input[type=number],input:not([type]),select,textarea{min-height:44px;border:1px solid #C9D3D1;border-radius:10px;padding:0 12px;font-size:16px;background:#fff;width:100%}
+textarea{padding:10px 12px;min-height:80px;resize:vertical}
+.seg{min-height:44px;border-radius:10px;border:1px solid #C9D3D1;background:#fff;color:var(--mut2);font-size:13px;font-weight:500}
+.seg.on{border:1.5px solid var(--acc);background:var(--accbg);color:var(--acc2);font-weight:600}
+.tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;padding:4px;background:#E6EBEA;border-radius:12px}
+.tabs a{min-height:40px;border-radius:9px;display:flex;align-items:center;justify-content:center;text-decoration:none;color:var(--mut2);font-size:15px;font-weight:500}
+.tabs a.on{background:#fff;color:var(--ink);font-weight:600}
+.list{display:flex;flex-direction:column}
+.li{display:flex;align-items:center;gap:12px;min-height:48px;border-bottom:1px solid var(--line2);font-size:15px}
+.li:last-child{border-bottom:0}
+.code{font-family:ui-monospace,Menlo,monospace;font-weight:600}
+.bar{height:8px;border-radius:4px;background:#E6EBEA;overflow:hidden}.bar>div{height:100%;background:var(--acc)}
+.warnbox{background:var(--warnbg);border:1.5px solid var(--warnline);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;color:#5E3500}
+.okt{color:var(--ok);font-weight:600}.wt{color:var(--warn);font-weight:600}
+.param{display:flex;align-items:center;justify-content:space-between;min-height:52px;border-bottom:1px solid var(--line2);gap:8px}
+.param input{width:84px;text-align:right;font-weight:600;min-height:40px;padding:0 10px}
+.param input.bad{border:1.5px solid #C77A12;background:#FFF8EC}
+.param .u{width:44px;font-size:14px;color:var(--mut)}
+.photos{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.photos img,.photos button{width:100%;aspect-ratio:1;border-radius:10px;object-fit:cover;display:block}
+.photos img{background:#C7D6D3}
+.photos button{border:1.5px dashed #8FA3A0;background:transparent;color:var(--acc);display:flex;align-items:center;justify-content:center}
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:6;background:#fff;border-top:1px solid var(--line);padding:6px 8px calc(env(safe-area-inset-bottom) + 6px);display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
+.nav a{min-height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;text-decoration:none;color:var(--mut);font-size:12px;font-weight:500}
+.nav a.on{color:var(--acc);font-weight:600}
+.empty{text-align:center;color:var(--mut);padding:32px 16px;font-size:15px;line-height:1.5}
+.sheetwrap{position:fixed;inset:0;z-index:50;background:rgba(10,20,19,.45);display:flex;align-items:flex-end}
+.sheet{background:#fff;width:100%;max-height:90vh;overflow:auto;border-radius:18px 18px 0 0;padding:20px 20px calc(env(safe-area-inset-bottom) + 20px);display:flex;flex-direction:column;gap:12px}
+.sheet h2{margin:0;font-size:20px}
+.toast{position:fixed;left:16px;right:16px;bottom:calc(env(safe-area-inset-bottom) + 90px);z-index:60;background:var(--ink);color:#fff;border-radius:12px;padding:12px 16px;font-size:15px;text-align:center}
+#scan{position:fixed;inset:0;z-index:40;background:#0E1716;color:#F3F5F4;display:flex;flex-direction:column;padding:calc(env(safe-area-inset-top) + 8px) 20px calc(env(safe-area-inset-bottom) + 16px);gap:12px;overflow:auto}
+#scan .hd{display:flex;justify-content:space-between;align-items:center;min-height:44px}
+#scan .hd button{background:none;border:0;color:#F3F5F4;font-size:16px;min-height:44px}
+#scan .cam{position:relative;border-radius:18px;background:#1B2826;overflow:hidden;aspect-ratio:1/1;max-height:46vh;display:flex;align-items:center;justify-content:center}
+#scan video{width:100%;height:100%;object-fit:cover}
+#scan .frame{position:absolute;width:62%;aspect-ratio:1;border:3px solid #9FE0DC;border-radius:16px;pointer-events:none}
+#scan .res{border-radius:14px;padding:12px 16px;font-size:15px;line-height:1.4}
+#scan .res.ok{background:#163B3A}#scan .res.warn{background:#3A2A10;color:#F8E3BD}#scan .res.info{background:#1B2826;color:#C9D3D1}
+#scan input{background:#1B2826;border:1px solid #3B4846;color:#F3F5F4}
+#scan .btn.lt{background:#9FE0DC;color:#0E1716}
+#scan .btn.gr{background:#2C3D3B;color:#F3F5F4;width:auto}
+.hide{display:none!important}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<input type="file" id="fotoIn" accept="image/*" multiple class="hide">
+<input type="file" id="restIn" accept="application/json,.json" class="hide">
+<script src="jsQR.js"></script>
+<script>
+'use strict';
+/* ---------- utilitários ---------- */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const pad=n=>String(n).padStart(2,'0');
+const fmtD=t=>{if(!t)return'';const d=new Date(t);return pad(d.getDate())+'/'+pad(d.getMonth()+1)+'/'+d.getFullYear()};
+const fmtH=t=>{if(!t)return'';const d=new Date(t);return pad(d.getHours())+':'+pad(d.getMinutes())};
+const fmtDH=t=>t?fmtD(t)+' · '+fmtH(t):'';
+const isoDate=s=>{if(!s)return'';const [y,m,d]=s.split('-');return d+'/'+m+'/'+y};
+const isoLocal=t=>{const d=new Date(t);return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+' '+pad(d.getHours())+':'+pad(d.getMinutes())};
+const toLocalInput=t=>{const d=new Date(t);return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+'T'+pad(d.getHours())+':'+pad(d.getMinutes())};
+const num=v=>{if(v===''||v==null)return NaN;return parseFloat(String(v).replace(',','.'))};
+const ico={
+ drop:'<path d="M12 3c3 4 6 7 6 11a6 6 0 0 1-12 0c0-4 3-7 6-11z"/>',
+ book:'<path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h11"/>',
+ down:'<path d="M12 4v11"/><path d="M7 10l5 5 5-5"/><path d="M5 20h14"/>',
+ list:'<path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6h.01M4 12h.01M4 18h.01"/>',
+ ok:'<circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/>',
+ no:'<circle cx="12" cy="12" r="9"/>',
+ x:'<circle cx="12" cy="12" r="9"/><path d="M9 9l6 6M15 9l-6 6"/>',
+ cam:'<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',
+ ref:'<path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 5v6h-6"/>'
+};
+const svg=(k,c='currentColor',s=24,w=2)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="${c}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ico[k]}</svg>`;
+function toast(msg){const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2600)}
+
+/* ---------- base de dados (IndexedDB) ---------- */
+const DB={db:null,
+ open(){return new Promise((res,rej)=>{const r=indexedDB.open('colheitas',1);
+  r.onupgradeneeded=()=>{const d=r.result;d.createObjectStore('campanhas',{keyPath:'id'});d.createObjectStore('colheitas',{keyPath:'id'}).createIndex('campanhaId','campanhaId');d.createObjectStore('fotos',{keyPath:'id'}).createIndex('colheitaId','colheitaId');d.createObjectStore('meta')};
+  r.onsuccess=()=>{this.db=r.result;res()};r.onerror=()=>rej(r.error)})},
+ st(s,m='readonly'){return this.db.transaction(s,m).objectStore(s)},
+ rq(r){return new Promise((res,rej)=>{r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})},
+ get(s,k){return this.rq(this.st(s).get(k))},
+ all(s){return this.rq(this.st(s).getAll())},
+ idx(s,i,v){return this.rq(this.st(s).index(i).getAll(v))},
+ put(s,v,k){const o=this.st(s,'readwrite');return this.rq(k===undefined?o.put(v):o.put(v,k))},
+ del(s,k){return this.rq(this.st(s,'readwrite').delete(k))}
+};
+
+/* ---------- catálogo por omissão (da base de conhecimento) ---------- */
+const CAT0={
+ destinos:['Laboratório (definir)'],
+ parametros:[
+  {id:'temp',nome:'Temperatura',unidade:'°C',min:-2,max:40,obrig:true},
+  {id:'sal',nome:'Salinidade',unidade:'PSU',min:0,max:42,obrig:true},
+  {id:'odp',nome:'Oxigénio dissolvido',unidade:'%',min:0,max:150,obrig:true},
+  {id:'odm',nome:'Oxigénio dissolvido',unidade:'mg/L',min:0,max:20,obrig:true},
+  {id:'ph',nome:'pH',unidade:'',min:6,max:9.5,obrig:false}],
+ tipos:[
+  {id:'mb',prefixo:'MB',ordem:1,nome:'Microbiologia',sub:'E. coli e enterococos intestinais',frasco:'Estéril 250–500 mL',ambientar:'Não',conservacao:'2–8 °C, escuro',prazo:'8 h (máx. 24 h)',prazoH:8,destino:'',
+   passos:['Colher primeiro.','Abrir só debaixo de água, a ~30 cm.','Boca contra a corrente, movimento em “U”.','Deixar ~2 cm de ar e fechar logo.','Mala térmica de imediato.'],
+   cuidados:'Não tocar no gargalo nem no interior da tampa. Se a tampa cair, o frasco fica comprometido. Com cloro (efluentes), usar frasco com tiossulfato.'},
+  {id:'mt',prefixo:'MT',ordem:2,nome:'Metais',sub:'Metais vestigiais',frasco:'PEAD/PFA lavado com ácido, saco duplo',ambientar:'Sim',conservacao:'HNO₃ até pH < 2; 4 °C',prazo:'~6 meses (Hg ~28 dias)',prazoH:null,destino:'',
+   passos:['Luvas de nitrilo novas; técnica “mãos limpas / mãos sujas”.','Colher à frente do barco, longe de metal.','Para dissolvidos, filtrar 0,45 µm.','Acidificar no campo ou no laboratório em 24 h.'],
+   cuidados:'Sem joias, ferramentas ou garrafas de metal perto. Não abrir o saco ao vento ou com poeira.'},
+  {id:'od',prefixo:'OD',ordem:3,nome:'OD Winkler',sub:'Oxigénio dissolvido por titulação',frasco:'Vidro CBO, tampa esmerilada',ambientar:'Transbordar 2–3 volumes',conservacao:'Fixado, escuro, selo de água',prazo:'Titular no dia (máx. ~24 h)',prazoH:24,destino:'',
+   passos:['Encher por tubo até ao fundo, sem borbulhar.','Deixar transbordar 2–3 volumes.','Fixar logo com sulfato de manganês + iodeto alcalino.','Tapar sem bolhas e agitar.'],
+   cuidados:'Uma bolha de ar invalida a amostra. Registar a temperatura da água.'},
+  {id:'nut',prefixo:'NUT',ordem:4,nome:'Nutrientes',sub:'Nitrato, nitrito, amónia, fosfato, silicato',frasco:'PE/PP lavado com ácido, 50–250 mL',ambientar:'Sim (3×)',conservacao:'4 °C escuro; −20 °C se > 24 h (silicato não congelar)',prazo:'24 h; congelado, meses',prazoH:24,destino:'',
+   passos:['Ambientar 3 vezes.','Filtrar (GF/F ou 0,45 µm) para dissolvidos.','Deixar ~10 % de espaço se for congelar.'],
+   cuidados:'Não fumar nem usar repelente/protetor perto dos frascos. Sem detergentes com fosfatos.'},
+  {id:'chl',prefixo:'CHL',ordem:5,nome:'Clorofila a',sub:'Pigmentos',frasco:'PE opaco ou âmbar, 1–2 L',ambientar:'Sim',conservacao:'4 °C escuro; filtro a −20 °C',prazo:'Filtrar em 24 h; filtro ~1 mês',prazoH:24,destino:'',
+   passos:['Homogeneizar e filtrar por GF/F com vácuo baixo.','Registar o volume filtrado.','Dobrar o filtro, embrulhar em alumínio e etiquetar.'],
+   cuidados:'A luz degrada o pigmento: filtrar à sombra. Não tocar no filtro com os dedos.'},
+  {id:'sst',prefixo:'SST',ordem:6,nome:'SST',sub:'Sólidos suspensos totais',frasco:'PE ou vidro, 1–2 L',ambientar:'Sim',conservacao:'4 °C, sem conservante',prazo:'~7 dias (melhor 48 h)',prazoH:168,destino:'',
+   passos:['Encher sem levantar sedimento do fundo.','Agitar bem antes de filtrar.'],
+   cuidados:'Em água salgada o laboratório deve lavar o filtro com água destilada.'},
+  {id:'fit',prefixo:'FIT',ordem:7,nome:'Fitoplâncton',sub:'Contagem e identificação',frasco:'Vidro âmbar ou PE opaco, 100–250 mL',ambientar:'Sim',conservacao:'Lugol ~1 %, escuro, não congelar',prazo:'Semanas a meses',prazoH:null,destino:'',
+   passos:['Encher deixando ~10 % de ar.','Fixar logo com Lugol ácido (cor de chá fraco).'],
+   cuidados:'Formaldeído é tóxico: luvas e local ventilado. Registar o fixador usado.'},
+  {id:'cot',prefixo:'COT',ordem:8,nome:'COT / hidrocarbonetos',sub:'Carbono orgânico, óleos',frasco:'Vidro âmbar, tampa PTFE',ambientar:'Não (hidrocarbonetos)',conservacao:'Ácido pH < 2; 4 °C escuro',prazo:'~28 dias',prazoH:null,destino:'',
+   passos:['Não ambientar os de hidrocarbonetos.','Encher até ao ombro.','Para COT dissolvido, filtrar GF/F calcinado.'],
+   cuidados:'Nada de plástico em contacto com a amostra. Longe do escape e do combustível do barco.'}
+ ]};
+let CAT=null;
+async function loadCat(){CAT=await DB.get('meta','catalogo');if(!CAT){CAT=JSON.parse(JSON.stringify(CAT0));await DB.put('meta',CAT,'catalogo')}}
+const saveCat=()=>DB.put('meta',CAT,'catalogo');
+const tipo=id=>CAT.tipos.find(t=>t.id===id)||{id,nome:id||'—',ordem:99,prazoH:null};
+const tipoPorCodigo=code=>{const p=code.split(/[-_ .]/)[0];return CAT.tipos.find(t=>t.prefixo&&t.prefixo.toUpperCase()===p)};
+const ESTADO={planeada:['Planeada','amber'],campo:['Em campo','teal'],fechada:['Fechada','gray']};
+const chip=e=>{const [t,c]=ESTADO[e]||ESTADO.planeada;return `<span class="chip ${c}">${t}</span>`};
+const MARES=['Baixa-mar','Preia-mar','Enchente','Vazante'];
+const MOTIVOS=['Não recolhido','Partido','Perdido','Comprometido (contaminado)','Outro'];
+
+/* ---------- navegação ---------- */
+const route=()=>location.hash.replace(/^#\/?/,'').split('/');
+const go=h=>{location.hash=h};
+window.addEventListener('hashchange',()=>render(true));
+const urls=[];const freeUrls=()=>{while(urls.length)URL.revokeObjectURL(urls.pop())};
+let rendering=false,pending=false;
+async function render(top){
+ if(rendering){pending=true;return}rendering=true;
+ const y=window.scrollY;freeUrls();
+ const [p,a,b]=route();let html='';
+ try{
+  if(p==='campanha')html=await vCampanha(a);
+  else if(p==='nova')html=await vFormCampanha(a);
+  else if(p==='colheita')html=await vColheita(a,b||'prep');
+  else if(p==='fichas')html=vFichas();
+  else if(p==='ficha')html=vFicha(a,b);
+  else if(p==='exportar')html=await vExportar();
+  else if(p==='catalogos')html=vCatalogos();
+  else html=await vHome();
+ }catch(e){console.error(e);html=`<div class="main"><div class="warnbox">Erro: ${esc(e.message)}</div><a class="btn" href="#/">Voltar ao início</a></div>`}
+ $('#app').innerHTML=html;
+ $('#app').classList.toggle('withnav',!!$('#app .nav'));
+ window.scrollTo(0,top?0:y);rendering=false;
+ if(pending){pending=false;render()}
+}
+function nav(on){const it=[['','Campanhas','drop'],['fichas','Fichas','book'],['exportar','Exportar','down'],['catalogos','Catálogos','list']];
+ return `<nav class="nav">${it.map(([h,t,i])=>`<a href="#/${h}" class="${on===h?'on':''}">${svg(i)}${t}</a>`).join('')}</nav>`}
+
+/* ---------- ecrã 1: campanhas ---------- */
+async function vHome(){
+ const cs=(await DB.all('campanhas')).sort((a,b)=>(b.criada||0)-(a.criada||0));
+ const ks=await DB.all('colheitas');
+ const em=cs.map(c=>{const k=ks.filter(x=>x.campanhaId===c.id);return{c,k,f:k.filter(x=>x.estado==='fechada').length,e:estadoCamp(k)}});
+ const n=e=>em.filter(x=>x.e===e).length;
+ return `<header class="top"><div class="row"><div style="display:flex;flex-direction:column;gap:4px"><h1 style="font-size:30px">Campanhas</h1><p class="sub">${n('campo')} em curso · ${n('planeada')} planeadas · ${n('fechada')} fechadas</p></div><a class="btn sm" style="display:inline-flex;align-items:center;text-decoration:none" href="#/nova">+ Nova</a></div></header>
+ <div class="main">
+ ${em.length?em.map(({c,k,f,e})=>`<a href="#/campanha/${c.id}" class="card" style="text-decoration:none;color:inherit">
+   <div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h2 style="margin:0;font-size:18px">${esc(c.nome)}</h2>${chip(e)}</div>
+   <p class="sub">${k.length} ponto${k.length===1?'':'s'}${c.inicio?' · '+isoDate(c.inicio):''}${c.fim&&c.fim!==c.inicio?' – '+isoDate(c.fim):''}</p>
+   <div class="bar"><div style="width:${k.length?Math.round(f/k.length*100):0}%"></div></div>
+   <p class="sub" style="font-size:13px">${f} de ${k.length} colheitas fechadas</p></a>`).join('')
+  :`<div class="empty">Ainda não há campanhas.<br>Toque em <b>+ Nova</b> para começar.</div>`}
+ <div class="warnbox" style="margin-top:8px;flex-direction:row;align-items:flex-start;gap:10px">${svg('no','#7A4300',20)}<span style="font-size:14px;line-height:1.4">Os dados ficam só neste iPhone. Exporte cada campanha no fim (separador Exportar).</span></div>
+ </div>${nav('')}`}
+function estadoCamp(k){if(!k.length)return'planeada';if(k.every(x=>x.estado==='fechada'))return'fechada';if(k.some(x=>x.estado!=='planeada'))return'campo';return'planeada'}
+
+/* ---------- formulário de campanha ---------- */
+async function vFormCampanha(id){
+ const c=id?await DB.get('campanhas',id):{};
+ return `<header class="top"><button class="back" data-act="voltar">‹ Cancelar</button><h1>${id?'Editar campanha':'Nova campanha'}</h1></header>
+ <div class="main"><div class="card">
+ <div class="fld"><label class="lbl" for="cNome">Nome</label><input id="cNome" type="text" value="${esc(c.nome)}" placeholder="ex.: Estuário — novembro"></div>
+ <div class="grid2"><div class="fld"><label class="lbl" for="cIni">Início</label><input id="cIni" type="date" value="${esc(c.inicio)}"></div><div class="fld"><label class="lbl" for="cFim">Fim</label><input id="cFim" type="date" value="${esc(c.fim)}"></div></div>
+ <div class="fld"><label class="lbl" for="cEq">Equipa</label><input id="cEq" type="text" value="${esc(c.equipa)}" placeholder="nomes ou iniciais"></div>
+ <div class="fld"><label class="lbl" for="cNot">Notas</label><textarea id="cNot">${esc(c.notas)}</textarea></div>
+ </div><button class="btn" data-act="guardarCamp" data-id="${esc(id||'')}">Guardar</button>
+ ${id?`<button class="btn danger" data-act="apagarCamp" data-id="${esc(id)}">Apagar campanha</button>`:''}</div>`}
+
+/* ---------- ecrã 2: campanha ---------- */
+async function vCampanha(id){
+ const c=await DB.get('campanhas',id);if(!c)return vHome();
+ const ks=(await DB.idx('colheitas','campanhaId',id)).sort((a,b)=>(a.criada||0)-(b.criada||0));
+ return `<header class="top"><a class="back" href="#/">‹ Campanhas</a><div class="row"><h1>${esc(c.nome)}</h1><a class="link" style="min-height:36px" href="#/nova/${c.id}">Editar</a></div>
+ <p class="sub">${[c.inicio?isoDate(c.inicio)+(c.fim&&c.fim!==c.inicio?' – '+isoDate(c.fim):''):'',c.equipa].filter(Boolean).map(esc).join(' · ')||'Sem datas definidas'}</p></header>
+ <div class="main"><p class="lbl" style="margin:4px 4px 0">Colheitas (1 por ponto)</p>
+ ${ks.length?ks.map(k=>{const r=k.frascos.filter(f=>f.estado==='recolhido').length;return `<a href="#/colheita/${k.id}/${k.estado==='planeada'?'prep':k.estado==='campo'?'recolha':'resumo'}" class="card${k.estado==='campo'?' sel':''}" style="flex-direction:row;align-items:center;gap:12px;text-decoration:none;color:inherit">
+  <div style="flex:1;display:flex;flex-direction:column;gap:4px"><h2 style="margin:0;font-size:17px">${esc(k.ponto.nome)}</h2><p class="sub">${esc(k.mareAlvo||'Maré por definir')} · ${k.dataPrevista?isoDate(k.dataPrevista):'sem data'} · ${r}/${k.frascos.length} frascos</p></div>${chip(k.estado)}</a>`}).join('')
+ :`<div class="empty">Sem pontos. Cada ponto que adicionar cria uma colheita.</div>`}
+ <button class="btn dash" data-act="novoPonto" data-id="${c.id}">+ Adicionar ponto</button>
+ <button class="btn out" style="margin-top:12px" data-act="exportCamp" data-id="${c.id}">Exportar campanha (CSV + fotos)</button></div>`}
+
+/* ---------- ecrãs 3, 5, 6: colheita ---------- */
+async function vColheita(id,tab){
+ const k=await DB.get('colheitas',id);if(!k)return vHome();
+ const c=await DB.get('campanhas',k.campanhaId)||{nome:'Campanha'};
+ const t=(n,l)=>`<a href="#/colheita/${k.id}/${n}" class="${tab===n?'on':''}" role="tab" aria-selected="${tab===n}">${l}</a>`;
+ const head=`<header class="top"><a class="back" href="#/campanha/${k.campanhaId}">‹ ${esc(c.nome)}</a><div class="row"><h1>${esc(k.ponto.nome)}</h1>${chip(k.estado)}</div><div class="tabs" role="tablist">${t('prep','Preparação')}${t('recolha','Recolha')}${t('resumo','Resumo')}</div></header>`;
+ const body=tab==='recolha'?await vRecolha(k):tab==='resumo'?await vResumo(k):vPrep(k);
+ return head+`<div class="main">${k.estado==='fechada'?`<div class="card" style="flex-direction:row;align-items:center;justify-content:space-between"><span class="sub">Fechada a ${fmtDH(k.fechadaEm)}</span><button class="btn out sm" data-act="reabrir" data-id="${k.id}">Reabrir</button></div>`:''}${body}</div>`}
+const ordF=a=>a.slice().sort((x,y)=>(tipo(x.tipoId).ordem||99)-(tipo(y.tipoId).ordem||99)||x.codigo.localeCompare(y.codigo));
+function vPrep(k){
+ const p=k.ponto;const ro=k.estado==='fechada'?'disabled':'';
+ return `<div class="card">
+ <div class="fld"><span class="lbl">Ponto</span><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span style="font-size:16px">${esc(p.nome)}${p.lat!=null&&p.lat!==''?` <span class="sub">(${esc(p.lat)}, ${esc(p.lon)})</span>`:''}</span><button class="link" style="min-height:36px" data-act="editPonto" data-id="${k.id}" ${ro}>Editar</button></div></div>
+ <div class="fld"><span class="lbl">Maré alvo</span><div class="grid4">${MARES.map(m=>`<button class="seg ${k.mareAlvo===m?'on':''}" aria-pressed="${k.mareAlvo===m}" data-act="mare" data-id="${k.id}" data-v="${m}" ${ro}>${m}</button>`).join('')}</div></div>
+ <div class="grid2"><div class="fld"><label class="lbl" for="kData">Data prevista</label><input id="kData" type="date" value="${esc(k.dataPrevista)}" data-on="kCampo" data-id="${k.id}" data-f="dataPrevista" ${ro}></div>
+ <div class="fld"><label class="lbl" for="kMare">Maré prevista</label><input id="kMare" type="text" value="${esc(k.marePrevista)}" placeholder="10:42 · 0,6 m" data-on="kCampo" data-id="${k.id}" data-f="marePrevista" ${ro}></div></div>
+ <p class="sub" style="font-size:13px">Copie a hora e a altura da tabela de marés do porto de referência.</p></div>
+ <div class="card"><div style="display:flex;justify-content:space-between;align-items:center"><span class="lbl">Frascos planeados</span><b>${k.frascos.length}</b></div>
+ <div class="list">${k.frascos.length?ordF(k.frascos).map(f=>`<div class="li"><span class="code" style="flex:1">${esc(f.codigo)}</span><span style="color:var(--mut2)">${esc(tipo(f.tipoId).nome)}</span>${k.estado==='planeada'?`<button class="link" aria-label="Retirar ${esc(f.codigo)}" style="min-width:44px;text-align:center;color:#A32D2D" data-act="tirarFrasco" data-id="${k.id}" data-c="${esc(f.codigo)}">✕</button>`:''}</div>`).join(''):'<p class="sub">Leia o QR de cada frasco ou escreva o código.</p>'}</div>
+ ${k.estado!=='fechada'?`<div class="grid2"><button class="btn" data-act="scan" data-id="${k.id}" data-m="prep">Ler QR</button><button class="btn out" data-act="manual" data-id="${k.id}" data-m="prep">Escrever código</button></div>`:''}</div>
+ ${k.estado==='planeada'?`<button class="btn dark" data-act="paraCampo" data-id="${k.id}">Pronta para campo →</button>`:''}`}
+
+function mareDiff(k){
+ if(!k.dataReal||!k.marePrevista||!k.dataPrevista)return'';
+ const m=String(k.marePrevista).match(/(\d{1,2})\s*[:h]\s*(\d{2})/);if(!m)return'';
+ const [y,mo,d]=k.dataPrevista.split('-').map(Number);const prev=new Date(y,mo-1,d,+m[1],+m[2]).getTime();
+ const diff=Math.round((k.dataReal-prev)/60000);if(Math.abs(diff)>24*60)return'';
+ const a=Math.abs(diff),txt=a>=60?Math.floor(a/60)+' h '+(a%60)+' min':a+' min';
+ return diff===0?'À hora da maré prevista':`${txt} ${diff>0?'depois':'antes'} da maré prevista`}
+function dist(a,b,c,d){const R=6371000,r=x=>x*Math.PI/180;const dl=r(c-a),dn=r(d-b);const h=Math.sin(dl/2)**2+Math.cos(r(a))*Math.cos(r(c))*Math.sin(dn/2)**2;return 2*R*Math.asin(Math.sqrt(h))}
+function paramsDe(k){const ids=new Set();const out=[];CAT.parametros.forEach(p=>{ids.add(p.id);out.push(p)});(k.extras||[]).forEach(p=>{if(!ids.has(p.id))out.push(p)});return out}
+function paramBad(p,v){if(v===''||v==null)return!!p.obrig;const n=num(v);if(isNaN(n))return true;return(p.min!=null&&n<p.min)||(p.max!=null&&n>p.max)}
+async function vRecolha(k){
+ const fotos=await DB.idx('fotos','colheitaId',k.id);const ro=k.estado==='fechada'?'disabled':'';
+ const g=k.gps;let gtxt='Ainda sem posição';
+ if(g){const p=k.ponto;let d='';if(p.lat!==''&&p.lat!=null&&!isNaN(num(p.lat))&&!isNaN(num(p.lon)))d=` · a ${Math.round(dist(g.lat,g.lon,num(p.lat),num(p.lon)))} m do ponto de referência`;gtxt=`Precisão ±${Math.round(g.acc)} m${d}`}
+ const r=k.frascos.filter(f=>f.estado==='recolhido').length;
+ const ic={recolhido:svg('ok','#1B6B47',24,2.4),falta:svg('x','#7A4300'),partido:svg('x','#A32D2D'),planeado:svg('no','#8FA3A0')};
+ return `<div class="card" style="flex-direction:row;align-items:center;gap:12px"><div style="flex:1;display:flex;flex-direction:column;gap:4px;min-width:0"><span class="lbl">Data e hora real</span>
+  ${k.dataReal?`<input type="datetime-local" aria-label="Data e hora real" value="${toLocalInput(k.dataReal)}" data-on="kDataReal" data-id="${k.id}" style="font-weight:600" ${ro}><span class="sub" style="font-size:13px">${esc(mareDiff(k))}</span>`:'<span style="font-size:17px;color:var(--mut)">Por registar</span>'}</div>
+  <button class="btn out sm" style="flex-shrink:0" data-act="agora" data-id="${k.id}" ${ro}>Agora</button></div>
+ <div class="card" style="flex-direction:row;align-items:center;gap:12px"><div style="flex:1;display:flex;flex-direction:column;gap:4px;min-width:0"><span class="lbl">GPS</span>
+  <span class="code" style="font-size:17px">${g?g.lat.toFixed(5)+', '+g.lon.toFixed(5):'—'}</span><span style="font-size:13px;color:${g&&g.acc<=15?'var(--ok)':'var(--warn)'}">${gtxt}</span></div>
+  <button class="btn out sm" aria-label="Obter posição GPS" data-act="gps" data-id="${k.id}" ${ro} style="width:48px;padding:0;display:flex;align-items:center;justify-content:center">${svg('ref')}</button></div>
+ <div class="card"><span class="lbl">Fotos · ${fotos.length}</span><div class="photos">
+  ${fotos.map(f=>{const u=URL.createObjectURL(f.blob);urls.push(u);return `<img src="${u}" alt="Foto ${fmtH(f.t)}" data-act="verFoto" data-id="${f.id}">`}).join('')}
+  ${ro?'':`<button aria-label="Tirar foto" data-act="foto" data-id="${k.id}">${svg('cam','currentColor',26)}</button>`}</div></div>
+ <div class="card" style="gap:2px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><span class="lbl">Parâmetros de campo</span>
+  <input aria-label="Instrumento" placeholder="Sonda / n.º série" value="${esc(k.instrumento)}" data-on="kCampo" data-id="${k.id}" data-f="instrumento" style="width:150px;min-height:36px;font-size:14px" ${ro}></div>
+  ${paramsDe(k).map(p=>{const v=(k.medicoes||{})[p.id]??'';return `<div class="param"><label for="p_${p.id}" style="font-size:16px">${esc(p.nome)}${p.obrig?'':' <span class="sub">(opc.)</span>'}</label><span style="display:flex;align-items:center;gap:6px"><input id="p_${p.id}" type="text" inputmode="decimal" value="${esc(v)}" class="${paramBad(p,v)?'bad':''}" data-on="kParam" data-id="${k.id}" data-p="${p.id}" ${ro}><span class="u">${esc(p.unidade)}</span></span></div>`}).join('')}
+  ${ro?'':`<button class="link" data-act="novoParam" data-id="${k.id}">+ Adicionar parâmetro</button>`}</div>
+ <div class="card" style="gap:2px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><span class="lbl">Frascos</span><b style="font-size:14px">${r} de ${k.frascos.length} recolhidos</b></div>
+  ${ordF(k.frascos).map(f=>`<div class="li"><button aria-label="Estado de ${esc(f.codigo)}" data-act="estadoFrasco" data-id="${k.id}" data-c="${esc(f.codigo)}" style="display:flex;align-items:center;gap:12px;flex:1;background:none;border:0;padding:0;min-height:48px;text-align:left" ${ro}>${ic[f.estado]||ic.planeado}<span><span class="code">${esc(f.codigo)}</span> · ${esc(tipo(f.tipoId).nome)}</span></button>
+   <span style="font-size:13px;color:var(--mut)">${f.estado==='recolhido'?fmtH(f.hora):f.estado==='planeado'?'':esc(f.estado)}</span><a class="link" style="display:flex;align-items:center;min-width:44px;justify-content:flex-end;text-decoration:none" href="#/ficha/${esc(f.tipoId)}/${k.id}">Ficha</a></div>`).join('')}
+  ${ro?'':`<div class="grid2" style="margin-top:8px"><button class="btn" data-act="scan" data-id="${k.id}" data-m="recolha">Ler QR</button><button class="btn out" data-act="manual" data-id="${k.id}" data-m="recolha">Escrever código</button></div>`}</div>
+ <div class="card"><label class="lbl" for="kObs">Observações</label><textarea id="kObs" data-on="kCampo" data-id="${k.id}" data-f="obs" placeholder="meteo, estado do mar, ocorrências" ${ro}>${esc(k.obs)}</textarea></div>
+ ${k.estado==='campo'?`<a class="btn dark" style="display:flex;align-items:center;justify-content:center;text-decoration:none" href="#/colheita/${k.id}/resumo">Ver resumo →</a>`:''}`}
+
+function avisos(k,nf){
+ const a=[];
+ a.push(k.gps?['ok','GPS']:['w','GPS em falta']);
+ a.push(nf?['ok',nf+' foto'+(nf>1?'s':'')]:['w','Sem fotos']);
+ const miss=paramsDe(k).filter(p=>p.obrig&&((k.medicoes||{})[p.id]??'')==='');
+ a.push(miss.length?['w',miss.length===1?miss[0].nome+(miss[0].unidade?' ('+miss[0].unidade+')':'')+' em falta':miss.length+' parâmetros em falta']:['ok','Parâmetros']);
+ const sem=k.frascos.filter(f=>f.estado==='planeado').length;
+ a.push(sem?['w',sem+' frasco'+(sem>1?'s':'')+' sem estado']:['ok','Frascos com estado']);
+ if(!k.frascos.length)a.push(['w','Sem frascos']);
+ if(!k.dataReal)a.push(['w','Hora real em falta']);
+ return a}
+function prazoTxt(f){const t=tipo(f.tipoId);if(!t.prazoH||!f.hora)return'';const lim=f.hora+t.prazoH*3600000;return t.prazoH<=48?'entregar até '+(fmtD(lim)!==fmtD(f.hora)?fmtD(lim)+' ':'')+fmtH(lim):''}
+async function vResumo(k){
+ const nf=(await DB.idx('fotos','colheitaId',k.id)).length;
+ const tot=k.frascos.length,r=k.frascos.filter(f=>f.estado==='recolhido');
+ const falta=k.frascos.filter(f=>f.estado!=='recolhido');
+ const av=avisos(k,nf),ok=av.every(x=>x[0]==='ok');const ro=k.estado==='fechada'?'disabled':'';
+ const dests=CAT.destinos;
+ const grupos={};r.forEach(f=>{const d=f.destino||tipo(f.tipoId).destino||dests[0]||'—';(grupos[d]=grupos[d]||[]).push(f)});
+ return `<div class="card"><div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:22px;font-weight:700">${r.length} de ${tot} frascos</span><span class="sub">recolhidos</span></div><div class="bar" style="height:10px"><div style="width:${tot?Math.round(r.length/tot*100):0}%"></div></div></div>
+ ${falta.length?`<div class="warnbox"><span class="lbl" style="color:var(--warn)">Em falta · ${falta.length}</span>
+  ${falta.map(f=>`<div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:16px;font-weight:600"><span class="code">${esc(f.codigo)}</span> · ${esc(tipo(f.tipoId).nome)}</span>
+  <select aria-label="Motivo para ${esc(f.codigo)}" data-on="motivo" data-id="${k.id}" data-c="${esc(f.codigo)}" style="border-color:var(--warnline)" ${ro}><option value="">${f.estado==='planeado'?'Sem estado — escolher motivo…':'Escolher motivo…'}</option>${MOTIVOS.map(m=>`<option ${f.motivo===m?'selected':''}>${m}</option>`).join('')}</select></div>`).join('')}</div>`:''}
+ ${r.length?`<div class="card" style="gap:4px"><span class="lbl">Para onde vão</span>
+  ${Object.keys(grupos).sort().map(d=>`<p style="margin:10px 0 2px;font-weight:600">${esc(d)}</p>${ordF(grupos[d]).map(f=>`<div class="li" style="flex-wrap:wrap;gap:6px 12px;padding:6px 0"><span style="flex:1;min-width:150px"><span class="code">${esc(f.codigo)}</span> · ${esc(tipo(f.tipoId).nome)}${prazoTxt(f)?`<br><span class="wt" style="font-size:13px">${prazoTxt(f)}</span>`:''}</span>
+   <select aria-label="Destino de ${esc(f.codigo)}" data-on="destino" data-id="${k.id}" data-c="${esc(f.codigo)}" style="width:auto;max-width:180px;min-height:40px;font-size:14px" ${ro}>${dests.map(x=>`<option ${x===d?'selected':''}>${esc(x)}</option>`).join('')}</select></div>`).join('')}`).join('')}</div>`:''}
+ <div class="card grid2" style="display:grid;font-size:15px;gap:8px 12px">${av.map(([t,s])=>`<span class="${t==='ok'?'okt':'wt'}">${t==='ok'?'✓':'!'} ${esc(s)}</span>`).join('')}</div>
+ ${k.estado!=='fechada'?`<button class="btn" data-act="fechar" data-id="${k.id}" ${ok?'':'disabled'}>Fechar colheita</button>${ok?'':'<p class="sub" style="text-align:center;font-size:13px;margin-top:-4px">Fica disponível quando não houver avisos.</p>'}`:''}`}
+
+/* ---------- ecrã 7: fichas ---------- */
+function vFichas(){return `<header class="top"><h1 style="font-size:30px">Fichas</h1><p class="sub">Como colher cada tipo de amostra</p></header><div class="main">
+ ${CAT.tipos.slice().sort((a,b)=>a.ordem-b.ordem).map(t=>`<a href="#/ficha/${t.id}" class="card" style="flex-direction:row;align-items:center;gap:12px;text-decoration:none;color:inherit"><div style="flex:1;display:flex;flex-direction:column;gap:2px"><b style="font-size:17px">${esc(t.nome)}</b><span class="sub">${esc(t.frasco)} · ${esc(t.prazo)}</span></div><span class="code" style="color:var(--mut)">${esc(t.prefixo)}</span></a>`).join('')}
+ <p class="sub" style="font-size:13px;text-align:center">Valores típicos — confirmar com o laboratório de destino.</p></div>${nav('fichas')}`}
+function vFicha(id,kid){const t=CAT.tipos.find(x=>x.id===id);if(!t)return vFichas();
+ const box=(l,v,w)=>`<div class="card" style="padding:12px;gap:4px${w?';background:#FFF1DB;border-color:var(--warnline)':''}"><span style="font-size:12px;color:${w?'var(--warn)':'var(--mut)'}">${l}</span><span style="font-size:15px;font-weight:600">${esc(v)}</span></div>`;
+ return `<header class="top">${kid?`<a class="back" href="#/colheita/${esc(kid)}/recolha">‹ Recolha</a>`:'<a class="back" href="#/fichas">‹ Fichas</a>'}${t.ordem===1?'<span class="lbl">Ficha · colher primeiro</span>':''}<h1>${esc(t.nome)}</h1><p class="sub">${esc(t.sub)}</p></header>
+ <div class="main"><div class="grid2">${box('Frasco',t.frasco)}${box('Ambientar',t.ambientar,/^n[ãa]o/i.test(t.ambientar))}${box('Conservação',t.conservacao)}${box('Prazo',t.prazo)}</div>
+ <div class="card"><h2 style="margin:0;font-size:16px">Como colher</h2><ol style="margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;font-size:15px;line-height:1.45">${t.passos.map(p=>`<li>${esc(p)}</li>`).join('')}</ol></div>
+ <div class="card"><h2 style="margin:0;font-size:16px">Cuidados</h2><p style="margin:0;font-size:15px;line-height:1.45">${esc(t.cuidados)}</p></div>
+ <p class="sub" style="font-size:13px;text-align:center">Valores típicos (ISO 5667-3, ISO 19458) — confirmar com o laboratório de destino.</p></div>`}
+
+/* ---------- exportar ---------- */
+async function vExportar(){
+ const cs=(await DB.all('campanhas')).sort((a,b)=>(b.criada||0)-(a.criada||0));
+ let est='';try{const e=await navigator.storage.estimate();est=`${(e.usage/1048576).toFixed(1)} MB usados neste iPhone`}catch(e){}
+ return `<header class="top"><h1 style="font-size:30px">Exportar</h1><p class="sub">${esc(est)}</p></header><div class="main">
+ <p class="lbl" style="margin:4px 4px 0">Por campanha (ZIP com CSV e fotos)</p>
+ ${cs.length?cs.map(c=>`<div class="card" style="flex-direction:row;align-items:center;gap:12px"><b style="flex:1">${esc(c.nome)}</b><button class="btn out sm" data-act="exportCamp" data-id="${c.id}">Exportar</button></div>`).join(''):'<p class="sub">Sem campanhas.</p>'}
+ <p class="lbl" style="margin:16px 4px 0">Cópia de segurança</p>
+ <div class="card"><p class="sub">Um ficheiro com tudo (campanhas, fotos e catálogos), para guardar ou passar para outro telemóvel.</p>
+ <button class="btn" data-act="backup">Criar cópia de segurança</button><button class="btn out" data-act="restaurar">Restaurar de uma cópia</button></div>
+ </div>${nav('exportar')}`}
+
+/* ---------- catálogos ---------- */
+function vCatalogos(){return `<header class="top"><h1 style="font-size:30px">Catálogos</h1><p class="sub">Comuns a todas as campanhas</p></header><div class="main">
+ <div class="card"><label class="lbl" for="catDest">Destinos (um por linha)</label><textarea id="catDest" data-on="catDest" style="min-height:110px">${esc(CAT.destinos.join('\n'))}</textarea></div>
+ <div class="card" style="gap:4px"><span class="lbl">Tipos de frasco</span><p class="sub" style="font-size:13px">O prefixo do código QR (ex.: <b>NUT</b>-0088) identifica o tipo.</p>
+ ${CAT.tipos.slice().sort((a,b)=>a.ordem-b.ordem).map(t=>`<div class="li" style="flex-wrap:wrap;gap:6px 10px;padding:8px 0"><b style="flex:1;min-width:120px">${esc(t.nome)}</b>
+  <input aria-label="Prefixo ${esc(t.nome)}" value="${esc(t.prefixo)}" data-on="catPref" data-t="${t.id}" style="width:72px;min-height:40px;text-transform:uppercase" class="code">
+  <select aria-label="Destino de ${esc(t.nome)}" data-on="catTDest" data-t="${t.id}" style="width:150px;min-height:40px;font-size:14px"><option value="">Destino…</option>${CAT.destinos.map(d=>`<option ${t.destino===d?'selected':''}>${esc(d)}</option>`).join('')}</select></div>`).join('')}</div>
+ <div class="card" style="gap:4px"><span class="lbl">Parâmetros de campo</span>
+ ${CAT.parametros.map((p,i)=>`<div class="li" style="flex-wrap:wrap;gap:6px 10px;padding:6px 0"><span style="flex:1;min-width:140px">${esc(p.nome)} <span class="sub">${esc(p.unidade)}</span></span>
+  <label style="display:flex;align-items:center;gap:6px;font-size:14px;min-height:44px"><input type="checkbox" ${p.obrig?'checked':''} data-on="catObrig" data-i="${i}" style="width:22px;height:22px">Obrigatório</label>
+  <button class="link" style="color:#A32D2D;min-width:44px" aria-label="Retirar ${esc(p.nome)}" data-act="catTirarParam" data-i="${i}">✕</button></div>`).join('')}
+ <button class="link" data-act="novoParam" data-id="">+ Adicionar parâmetro</button></div>
+ <button class="btn danger" data-act="catReset">Repor catálogo original</button></div>${nav('catalogos')}`}
+
+/* ---------- folha (modal) ---------- */
+function sheet(html){closeSheet();const w=document.createElement('div');w.className='sheetwrap';w.id='sheet';w.innerHTML=`<div class="sheet" role="dialog" aria-modal="true">${html}</div>`;w.addEventListener('click',e=>{if(e.target===w)closeSheet()});document.body.appendChild(w);const f=w.querySelector('input,select');if(f&&f.dataset.autofocus!==undefined)f.focus();return w}
+function closeSheet(){const s=$('#sheet');if(s){s.remove();if(scan)scan.paused=false}}
+const tipoOpts=sel=>CAT.tipos.slice().sort((a,b)=>a.ordem-b.ordem).map(t=>`<option value="${t.id}" ${sel===t.id?'selected':''}>${esc(t.nome)}</option>`).join('');
+
+/* ---------- regras dos frascos ---------- */
+async function usadoNoutra(code,kid){const ks=await DB.all('colheitas');return ks.find(x=>x.id!==kid&&x.frascos.some(f=>f.codigo===code))}
+async function addPlaneado(k,code,tipoId){
+ if(k.frascos.some(f=>f.codigo===code))return{t:'warn',m:`${code} já está na lista.`};
+ const o=await usadoNoutra(code,k.id);if(o)return{t:'warn',m:`${code} já está planeado em ${o.ponto.nome}. Não foi acrescentado.`};
+ k.frascos.push({codigo:code,tipoId,estado:'planeado',hora:null,motivo:'',destino:''});await saveK(k);
+ return{t:'ok',m:`${code} · ${tipo(tipoId).nome} — planeado (${k.frascos.length})`}}
+async function marcarRecolhido(k,code,tipoId){
+ let f=k.frascos.find(x=>x.codigo===code);
+ if(!f){const o=await usadoNoutra(code,k.id);if(o)return{t:'warn',m:`${code} pertence a ${o.ponto.nome}! Frasco trocado?`};
+  f={codigo:code,tipoId,estado:'planeado',hora:null,motivo:'',destino:''};k.frascos.push(f)}
+ if(f.estado==='recolhido')return{t:'info',m:`${code} já estava confirmado às ${fmtH(f.hora)}.`};
+ f.estado='recolhido';f.hora=Date.now();f.motivo='';await saveK(k);
+ const n=k.frascos.filter(x=>x.estado==='recolhido').length;
+ return{t:'ok',m:`${code} · ${tipo(f.tipoId).nome} — recolhido às ${fmtH(f.hora)} · ${n} de ${k.frascos.length}`}}
+async function saveK(k){k.atualizada=Date.now();await DB.put('colheitas',k)}
+const normCode=s=>String(s).trim().toUpperCase().replace(/\s+/g,'');
+
+/* código lido (QR ou à mão): devolve mensagem; pode pedir o tipo */
+async function tratarCodigo(kid,mode,raw,onMsg){
+ const code=normCode(raw);if(!code)return;
+ const k=await DB.get('colheitas',kid);
+ const existe=k.frascos.find(f=>f.codigo===code);
+ const t=existe?{id:existe.tipoId}:tipoPorCodigo(code);
+ if(mode==='prep'&&t){onMsg(await addPlaneado(k,code,t.id));return}
+ if(mode==='recolha'&&existe){onMsg(await marcarRecolhido(k,code,existe.tipoId));return}
+ if(scan)scan.paused=true;
+ const novo=mode==='recolha';
+ sheet(`<h2>${novo?'Frasco não planeado':'Tipo de frasco'}</h2><p class="sub"><span class="code">${esc(code)}</span>${novo?' não estava na lista desta colheita.':' — o prefixo não corresponde a nenhum tipo.'}</p>
+ <div class="fld"><label class="lbl" for="shTipo">Tipo</label><select id="shTipo">${tipoOpts(t&&t.id)}</select></div>
+ <button class="btn" id="shOk">${novo?'Acrescentar como recolhido':'Acrescentar'}</button><button class="btn out" id="shNo">Ignorar</button>`);
+ $('#shOk').onclick=async()=>{const tid=$('#shTipo').value;closeSheet();const k2=await DB.get('colheitas',kid);onMsg(novo?await marcarRecolhido(k2,code,tid):await addPlaneado(k2,code,tid))};
+ $('#shNo').onclick=()=>{closeSheet();onMsg({t:'info',m:`${code} ignorado.`})};
+}
+
+/* ---------- leitor de QR ---------- */
+let scan=null;
+async function openScanner(kid,mode){
+ const k=await DB.get('colheitas',kid);
+ const o=document.createElement('div');o.id='scan';
+ o.innerHTML=`<div class="hd"><button id="scX">Cancelar</button><b>${mode==='prep'?'Preparação':'Recolha'} · ${esc(k.ponto.nome)}</b><span style="width:60px"></span></div>
+ <div class="cam"><video id="scV" playsinline muted></video><div class="frame"></div></div>
+ <div id="scR" class="res info">Aponte para o QR do frasco</div>
+ <div style="margin-top:auto;display:flex;flex-direction:column;gap:8px"><label for="scM" class="lbl" style="color:#A9B6B3">Sem leitura? Escreva o código</label>
+ <div style="display:flex;gap:8px"><input id="scM" type="text" autocapitalize="characters" autocomplete="off" placeholder="ex.: CHL-0031" style="flex:1"><button class="btn gr sm" id="scA">Adicionar</button></div>
+ <button class="btn lt" id="scD">Concluir</button></div>`;
+ document.body.appendChild(o);document.body.style.overflow='hidden';
+ const msg=r=>{const e=$('#scR');if(!e)return;e.className='res '+r.t;e.textContent=r.m};
+ scan={kid,mode,paused:false,last:'',lastT:0,stream:null,on:true};
+ const close=()=>{scan.on=false;if(scan.stream)scan.stream.getTracks().forEach(t=>t.stop());o.remove();document.body.style.overflow='';scan=null;closeSheet();render()};
+ $('#scX').onclick=close;$('#scD').onclick=close;
+ const man=()=>{const v=$('#scM').value;$('#scM').value='';tratarCodigo(kid,mode,v,msg)};
+ $('#scA').onclick=man;$('#scM').onkeydown=e=>{if(e.key==='Enter')man()};
+ try{
+  const st=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false});
+  if(!scan){st.getTracks().forEach(t=>t.stop());return}
+  scan.stream=st;const v=$('#scV');v.srcObject=st;await v.play();
+  const cv=document.createElement('canvas'),cx=cv.getContext('2d',{willReadFrequently:true});
+  const tick=()=>{if(!scan||!scan.on)return;
+   if(!scan.paused&&v.readyState>=2&&v.videoWidth){const s=Math.min(1,640/v.videoWidth);cv.width=Math.round(v.videoWidth*s);cv.height=Math.round(v.videoHeight*s);cx.drawImage(v,0,0,cv.width,cv.height);
+    const d=cx.getImageData(0,0,cv.width,cv.height);const q=jsQR(d.data,cv.width,cv.height,{inversionAttempts:'attemptBoth'});
+    if(q&&q.data){const c=normCode(q.data);const now=Date.now();if(c&&(c!==scan.last||now-scan.lastT>4000)){scan.last=c;scan.lastT=now;if(navigator.vibrate)navigator.vibrate(60);tratarCodigo(kid,mode,c,msg)}}}
+   setTimeout(tick,150)};
+  tick();
+ }catch(e){msg({t:'warn',m:'Não foi possível abrir a câmara ('+(e.name||e.message)+'). Autorize a câmara nas definições ou escreva o código.'})}
+}
+
+/* ---------- fotos ---------- */
+function resize(file,max=1600,q=.82){return new Promise((res,rej)=>{const u=URL.createObjectURL(file);const im=new Image();
+ im.onload=()=>{const s=Math.min(1,max/Math.max(im.naturalWidth,im.naturalHeight));const c=document.createElement('canvas');c.width=Math.round(im.naturalWidth*s);c.height=Math.round(im.naturalHeight*s);c.getContext('2d').drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);c.toBlob(b=>b?res(b):rej(new Error('falha ao comprimir')),'image/jpeg',q)};
+ im.onerror=()=>{URL.revokeObjectURL(u);rej(new Error('imagem inválida'))};im.src=u})}
+let fotoK=null;
+$('#fotoIn').addEventListener('change',async e=>{const fs=[...e.target.files];e.target.value='';if(!fotoK||!fs.length)return;
+ for(const f of fs){try{const b=await resize(f);await DB.put('fotos',{id:uid(),colheitaId:fotoK,blob:b,t:Date.now()})}catch(err){toast('Foto não guardada: '+err.message)}}render()});
+
+/* ---------- ZIP (sem compressão) ---------- */
+const CRC=(()=>{const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}return t})();
+const crc32=b=>{let c=0xFFFFFFFF;for(let i=0;i<b.length;i++)c=CRC[(c^b[i])&255]^(c>>>8);return(c^0xFFFFFFFF)>>>0};
+function zip(files){const enc=new TextEncoder(),parts=[],cen=[];let off=0;const d=new Date();
+ const dt=((d.getFullYear()-1980)<<9)|((d.getMonth()+1)<<5)|d.getDate(),tm=(d.getHours()<<11)|(d.getMinutes()<<5)|(d.getSeconds()>>1);
+ for(const f of files){const nm=enc.encode(f.name),data=f.data,crc=crc32(data);
+  const h=new DataView(new ArrayBuffer(30));h.setUint32(0,0x04034b50,true);h.setUint16(4,20,true);h.setUint16(6,0x0800,true);h.setUint16(8,0,true);h.setUint16(10,tm,true);h.setUint16(12,dt,true);h.setUint32(14,crc,true);h.setUint32(18,data.length,true);h.setUint32(22,data.length,true);h.setUint16(26,nm.length,true);h.setUint16(28,0,true);
+  parts.push(h.buffer,nm,data);
+  const c=new DataView(new ArrayBuffer(46));c.setUint32(0,0x02014b50,true);c.setUint16(4,20,true);c.setUint16(6,20,true);c.setUint16(8,0x0800,true);c.setUint16(10,0,true);c.setUint16(12,tm,true);c.setUint16(14,dt,true);c.setUint32(16,crc,true);c.setUint32(20,data.length,true);c.setUint32(24,data.length,true);c.setUint16(28,nm.length,true);c.setUint32(42,off,true);
+  cen.push(c.buffer,nm);off+=30+nm.length+data.length}
+ const cs=cen.reduce((s,x)=>s+x.byteLength,0);const e=new DataView(new ArrayBuffer(22));e.setUint32(0,0x06054b50,true);e.setUint16(8,files.length,true);e.setUint16(10,files.length,true);e.setUint32(12,cs,true);e.setUint32(16,off,true);
+ return new Blob([...parts,...cen,e.buffer],{type:'application/zip'})}
+const csvCell=v=>{const s=String(v??'');return /[;"\n\r]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s};
+const csv=rows=>'﻿'+rows.map(r=>r.map(csvCell).join(';')).join('\r\n');
+const slug=s=>String(s||'x').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^A-Za-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,40)||'x';
+async function shareBlob(blob,name){const file=new File([blob],name,{type:blob.type});
+ if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],title:name});return}catch(e){if(e.name==='AbortError')return}}
+ const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),60000)}
+async function exportCamp(id){
+ const c=await DB.get('campanhas',id);const ks=await DB.idx('colheitas','campanhaId',id);const enc=new TextEncoder();
+ const K=[['campanha','ponto','lat_ref','lon_ref','mare_alvo','data_prevista','mare_prevista','estado','data_hora_real','gps_lat','gps_lon','gps_precisao_m','instrumento','n_fotos','observacoes']];
+ const M=[['campanha','ponto','data_hora_real','parametro','valor','unidade']];
+ const F=[['campanha','ponto','codigo','tipo','estado','hora_recolha','motivo','destino','prazo']];
+ const files=[];
+ for(const k of ks){const fotos=await DB.idx('fotos','colheitaId',k.id);
+  K.push([c.nome,k.ponto.nome,k.ponto.lat,k.ponto.lon,k.mareAlvo,k.dataPrevista,k.marePrevista,ESTADO[k.estado][0],k.dataReal?isoLocal(k.dataReal):'',k.gps?k.gps.lat.toFixed(6):'',k.gps?k.gps.lon.toFixed(6):'',k.gps?Math.round(k.gps.acc):'',k.instrumento,fotos.length,k.obs]);
+  paramsDe(k).forEach(p=>{const v=(k.medicoes||{})[p.id];if(v!==undefined&&v!=='')M.push([c.nome,k.ponto.nome,k.dataReal?isoLocal(k.dataReal):'',p.nome,v,p.unidade])});
+  ordF(k.frascos).forEach(f=>F.push([c.nome,k.ponto.nome,f.codigo,tipo(f.tipoId).nome,f.estado,f.hora?isoLocal(f.hora):'',f.motivo,f.estado==='recolhido'?(f.destino||tipo(f.tipoId).destino||CAT.destinos[0]||''):'',prazoTxt(f)]));
+  for(let i=0;i<fotos.length;i++)files.push({name:`fotos/${slug(k.ponto.nome)}_${i+1}.jpg`,data:new Uint8Array(await fotos[i].blob.arrayBuffer())})}
+ files.unshift({name:'colheitas.csv',data:enc.encode(csv(K))},{name:'medicoes.csv',data:enc.encode(csv(M))},{name:'frascos.csv',data:enc.encode(csv(F))},{name:'campanha.json',data:enc.encode(JSON.stringify({campanha:c,colheitas:ks},null,1))});
+ await shareBlob(zip(files),`${slug(c.nome)}_${new Date().toISOString().slice(0,10)}.zip`)}
+const b2d=b=>new Promise(r=>{const f=new FileReader();f.onload=()=>r(f.result);f.readAsDataURL(b)});
+async function backup(){const fotos=await DB.all('fotos');const out={app:'colheitas',v:1,criada:new Date().toISOString(),catalogo:CAT,campanhas:await DB.all('campanhas'),colheitas:await DB.all('colheitas'),fotos:[]};
+ for(const f of fotos)out.fotos.push({id:f.id,colheitaId:f.colheitaId,t:f.t,data:await b2d(f.blob)});
+ await shareBlob(new Blob([JSON.stringify(out)],{type:'application/json'}),`colheitas-copia_${new Date().toISOString().slice(0,10)}.json`)}
+$('#restIn').addEventListener('change',async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;
+ try{const d=JSON.parse(await f.text());if(d.app!=='colheitas')throw new Error('não é uma cópia desta app');
+  if(!confirm(`Restaurar ${d.campanhas.length} campanhas e ${d.fotos.length} fotos? Registos com o mesmo identificador são substituídos.`))return;
+  for(const c of d.campanhas)await DB.put('campanhas',c);for(const k of d.colheitas)await DB.put('colheitas',k);
+  for(const p of d.fotos){const b=await (await fetch(p.data)).blob();await DB.put('fotos',{id:p.id,colheitaId:p.colheitaId,t:p.t,blob:b})}
+  if(d.catalogo){CAT=d.catalogo;await saveCat()}toast('Cópia restaurada');render()}catch(err){alert('Não foi possível restaurar: '+err.message)}});
+
+/* ---------- ações (toques) ---------- */
+const A={
+ voltar(){history.back()},
+ async guardarCamp(el){const nome=$('#cNome').value.trim();if(!nome){toast('Indique o nome da campanha');$('#cNome').focus();return}
+  const id=el.dataset.id;const c=id?await DB.get('campanhas',id):{id:uid(),criada:Date.now()};
+  Object.assign(c,{nome,inicio:$('#cIni').value,fim:$('#cFim').value,equipa:$('#cEq').value.trim(),notas:$('#cNot').value});
+  await DB.put('campanhas',c);go('#/campanha/'+c.id)},
+ async apagarCamp(el){const id=el.dataset.id;const ks=await DB.idx('colheitas','campanhaId',id);
+  if(!confirm(`Apagar esta campanha e as ${ks.length} colheitas (com fotos)? Não pode ser desfeito.`))return;
+  for(const k of ks){for(const f of await DB.idx('fotos','colheitaId',k.id))await DB.del('fotos',f.id);await DB.del('colheitas',k.id)}
+  await DB.del('campanhas',id);go('#/')},
+ novoPonto(el){pontoSheet(el.dataset.id,null)},
+ async editPonto(el){const k=await DB.get('colheitas',el.dataset.id);pontoSheet(k.campanhaId,k)},
+ async mare(el){const k=await DB.get('colheitas',el.dataset.id);k.mareAlvo=el.dataset.v;await saveK(k);render()},
+ async tirarFrasco(el){const k=await DB.get('colheitas',el.dataset.id);k.frascos=k.frascos.filter(f=>f.codigo!==el.dataset.c);await saveK(k);render()},
+ async paraCampo(el){const k=await DB.get('colheitas',el.dataset.id);if(!k.frascos.length&&!confirm('Não há frascos planeados. Avançar mesmo assim?'))return;k.estado='campo';await saveK(k);go('#/colheita/'+k.id+'/recolha')},
+ scan(el){openScanner(el.dataset.id,el.dataset.m)},
+ manual(el){const kid=el.dataset.id,m=el.dataset.m;
+  sheet(`<h2>Escrever código</h2><div class="fld"><label class="lbl" for="shC">Código do frasco</label><input id="shC" type="text" autocapitalize="characters" autocomplete="off" placeholder="ex.: NUT-0088" data-autofocus></div><button class="btn" id="shOk">Adicionar</button><button class="btn out" id="shNo">Fechar</button>`);
+  const go2=()=>{const v=$('#shC').value;closeSheet();tratarCodigo(kid,m,v,r=>{toast(r.m);render()})};
+  $('#shOk').onclick=go2;$('#shC').onkeydown=e=>{if(e.key==='Enter')go2()};$('#shNo').onclick=closeSheet},
+ async agora(el){const k=await DB.get('colheitas',el.dataset.id);k.dataReal=Date.now();if(k.estado==='planeada')k.estado='campo';await saveK(k);render()},
+ async gps(el){if(!navigator.geolocation){toast('GPS indisponível');return}el.disabled=true;toast('A obter posição…');
+  navigator.geolocation.getCurrentPosition(async p=>{const k=await DB.get('colheitas',el.dataset.id);k.gps={lat:p.coords.latitude,lon:p.coords.longitude,acc:p.coords.accuracy,t:Date.now()};if(k.estado==='planeada')k.estado='campo';await saveK(k);render()},
+  e=>{el.disabled=false;toast(e.code===1?'Autorize a localização nas definições':'Sem posição: tente de novo em céu aberto')},{enableHighAccuracy:true,timeout:25000,maximumAge:0})},
+ foto(el){fotoK=el.dataset.id;$('#fotoIn').click()},
+ async verFoto(el){const f=await DB.get('fotos',el.dataset.id);const u=URL.createObjectURL(f.blob);
+  sheet(`<img src="${u}" alt="Foto" style="width:100%;border-radius:12px"><p class="sub">${fmtDH(f.t)}</p><button class="btn danger" id="shDel">Apagar foto</button><button class="btn out" id="shNo">Fechar</button>`);
+  $('#shNo').onclick=()=>{URL.revokeObjectURL(u);closeSheet()};$('#shDel').onclick=async()=>{if(!confirm('Apagar esta foto?'))return;await DB.del('fotos',f.id);URL.revokeObjectURL(u);closeSheet();render()}},
+ async novoParam(el){const kid=el.dataset.id;
+  sheet(`<h2>Novo parâmetro</h2><div class="fld"><label class="lbl" for="shN">Nome</label><input id="shN" type="text" placeholder="ex.: Turbidez" data-autofocus></div><div class="fld"><label class="lbl" for="shU">Unidade</label><input id="shU" type="text" placeholder="ex.: NTU"></div>
+  ${kid?'<label style="display:flex;gap:10px;align-items:center;min-height:44px"><input type="checkbox" id="shG" checked style="width:22px;height:22px">Guardar no catálogo (para todas as colheitas)</label>':''}<button class="btn" id="shOk">Adicionar</button><button class="btn out" id="shNo">Cancelar</button>`);
+  $('#shNo').onclick=closeSheet;$('#shOk').onclick=async()=>{const nome=$('#shN').value.trim();if(!nome){$('#shN').focus();return}const p={id:'x'+uid(),nome,unidade:$('#shU').value.trim(),min:null,max:null,obrig:false};
+   if(!kid||$('#shG').checked){CAT.parametros.push(p);await saveCat()}else{const k=await DB.get('colheitas',kid);(k.extras=k.extras||[]).push(p);await saveK(k)}closeSheet();render()}},
+ async estadoFrasco(el){const kid=el.dataset.id,code=el.dataset.c;const k=await DB.get('colheitas',kid);const f=k.frascos.find(x=>x.codigo===code);
+  const op=[['recolhido','Recolhido agora'],['falta','Em falta'],['partido','Partido'],['planeado','Sem estado']];
+  sheet(`<h2><span class="code">${esc(code)}</span> · ${esc(tipo(f.tipoId).nome)}</h2>${op.map(([v,l])=>`<button class="btn ${f.estado===v?'':'out'}" data-v="${v}">${l}</button>`).join('')}<button class="btn out" id="shNo" style="border-color:#C9D3D1;color:var(--mut2)">Cancelar</button>`);
+  $('#shNo').onclick=closeSheet;$('#sheet').querySelectorAll('[data-v]').forEach(b=>b.onclick=async()=>{const v=b.dataset.v;f.estado=v;f.hora=v==='recolhido'?Date.now():null;if(v==='recolhido'||v==='planeado')f.motivo='';if(v==='partido')f.motivo='Partido';await saveK(k);closeSheet();render()})},
+ async fechar(el){const k=await DB.get('colheitas',el.dataset.id);k.estado='fechada';k.fechadaEm=Date.now();await saveK(k);toast('Colheita fechada');render()},
+ async reabrir(el){if(!confirm('Reabrir esta colheita para editar?'))return;const k=await DB.get('colheitas',el.dataset.id);k.estado='campo';k.fechadaEm=null;await saveK(k);render()},
+ async exportCamp(el){el.disabled=true;try{await exportCamp(el.dataset.id)}catch(e){alert('Falhou a exportação: '+e.message)}el.disabled=false},
+ async backup(el){el.disabled=true;try{await backup()}catch(e){alert('Falhou a cópia: '+e.message)}el.disabled=false},
+ restaurar(){$('#restIn').click()},
+ async catTirarParam(el){const p=CAT.parametros[+el.dataset.i];if(!confirm(`Retirar "${p.nome} ${p.unidade}" do catálogo? Os valores já registados mantêm-se na exportação só se o parâmetro existir.`))return;CAT.parametros.splice(+el.dataset.i,1);await saveCat();render()},
+ async catReset(){if(!confirm('Repor tipos, parâmetros e destinos originais? Os dados das campanhas não são apagados.'))return;CAT=JSON.parse(JSON.stringify(CAT0));await saveCat();render()}
+};
+function pontoSheet(cid,k){const p=k?k.ponto:{nome:'',lat:'',lon:''};
+ sheet(`<h2>${k?'Editar ponto':'Novo ponto'}</h2><div class="fld"><label class="lbl" for="shN">Nome do ponto</label><input id="shN" type="text" value="${esc(p.nome)}" placeholder="ex.: P3 · Molhe" data-autofocus></div>
+ <div class="grid2"><div class="fld"><label class="lbl" for="shLa">Latitude</label><input id="shLa" type="text" inputmode="decimal" value="${esc(p.lat)}" placeholder="37.0921"></div><div class="fld"><label class="lbl" for="shLo">Longitude</label><input id="shLo" type="text" inputmode="decimal" value="${esc(p.lon)}" placeholder="-8.4567"></div></div>
+ <button class="btn out" id="shGps">Usar a minha posição atual</button><button class="btn" id="shOk">${k?'Guardar':'Criar colheita neste ponto'}</button>${k?'<button class="btn danger" id="shDel">Apagar esta colheita</button>':''}<button class="btn out" id="shNo" style="border-color:#C9D3D1;color:var(--mut2)">Cancelar</button>`);
+ $('#shNo').onclick=closeSheet;
+ $('#shGps').onclick=()=>{$('#shGps').textContent='A obter posição…';navigator.geolocation.getCurrentPosition(q=>{$('#shLa').value=q.coords.latitude.toFixed(6);$('#shLo').value=q.coords.longitude.toFixed(6);$('#shGps').textContent=`Posição obtida (±${Math.round(q.coords.accuracy)} m)`},()=>{$('#shGps').textContent='Sem posição — tentar de novo'},{enableHighAccuracy:true,timeout:25000})};
+ $('#shOk').onclick=async()=>{const nome=$('#shN').value.trim();if(!nome){$('#shN').focus();return}const np={nome,lat:$('#shLa').value.trim().replace(',','.'),lon:$('#shLo').value.trim().replace(',','.')};
+  if(k){k.ponto=np;await saveK(k)}else{const nk={id:uid(),campanhaId:cid,criada:Date.now(),ponto:np,mareAlvo:'',dataPrevista:'',marePrevista:'',estado:'planeada',dataReal:null,gps:null,medicoes:{},extras:[],frascos:[],instrumento:'',obs:''};await saveK(nk);closeSheet();go('#/colheita/'+nk.id+'/prep');return}
+  closeSheet();render()};
+ if(k)$('#shDel').onclick=async()=>{if(!confirm('Apagar esta colheita, os frascos e as fotos? Não pode ser desfeito.'))return;for(const f of await DB.idx('fotos','colheitaId',k.id))await DB.del('fotos',f.id);await DB.del('colheitas',k.id);closeSheet();go('#/campanha/'+cid)}}
+
+/* ---------- edições de campos (sem redesenhar, para não perder o foco) ---------- */
+const E={
+ async kCampo(el){const k=await DB.get('colheitas',el.dataset.id);k[el.dataset.f]=el.value;await saveK(k)},
+ async kDataReal(el){if(!el.value)return;const k=await DB.get('colheitas',el.dataset.id);k.dataReal=new Date(el.value).getTime();await saveK(k)},
+ async kParam(el){const k=await DB.get('colheitas',el.dataset.id);k.medicoes=k.medicoes||{};const v=el.value.trim();k.medicoes[el.dataset.p]=v;await saveK(k);const p=paramsDe(k).find(x=>x.id===el.dataset.p);el.classList.toggle('bad',paramBad(p,v))},
+ async motivo(el){const k=await DB.get('colheitas',el.dataset.id);const f=k.frascos.find(x=>x.codigo===el.dataset.c);f.motivo=el.value;if(el.value){f.estado=el.value==='Partido'?'partido':'falta'}else if(f.estado!=='recolhido')f.estado='planeado';await saveK(k);render()},
+ async destino(el){const k=await DB.get('colheitas',el.dataset.id);const f=k.frascos.find(x=>x.codigo===el.dataset.c);f.destino=el.value;await saveK(k);render()},
+ async catDest(el){CAT.destinos=el.value.split('\n').map(s=>s.trim()).filter(Boolean);await saveCat()},
+ async catPref(el){const t=CAT.tipos.find(x=>x.id===el.dataset.t);t.prefixo=el.value.trim().toUpperCase();await saveCat()},
+ async catTDest(el){const t=CAT.tipos.find(x=>x.id===el.dataset.t);t.destino=el.value;await saveCat()},
+ async catObrig(el){CAT.parametros[+el.dataset.i].obrig=el.checked;await saveCat()}
+};
+document.addEventListener('click',e=>{const t=e.target.closest('[data-act]');if(!t||t.disabled)return;if(t.closest('#sheet')&&!t.closest('#app'))return;e.preventDefault();const f=A[t.dataset.act];if(f)Promise.resolve(f(t,e)).catch(err=>{console.error(err);alert('Erro: '+err.message)})});
+document.addEventListener('change',e=>{const t=e.target;if(!t.dataset||!t.dataset.on)return;const f=E[t.dataset.on];if(f)Promise.resolve(f(t)).catch(err=>{console.error(err);alert('Erro: '+err.message)})});
+
+/* ---------- arranque ---------- */
+(async()=>{
+ try{await DB.open();await loadCat()}catch(e){$('#app').innerHTML=`<div class="main"><div class="warnbox">Não foi possível abrir o armazenamento local: ${esc(e.message)}</div></div>`;return}
+ try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
+ render(true);
+ if('serviceWorker' in navigator&&location.protocol!=='file:')navigator.serviceWorker.register('sw.js').catch(()=>{});
+})();
+</script>
+</body>
+</html>
