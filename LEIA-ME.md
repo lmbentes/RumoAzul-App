@@ -39,10 +39,15 @@ Em Android: abrir no Chrome → menu → Instalar app.
 - **Exportar**: ZIP por campanha com `colheitas.csv`, `frascos.csv`, `medicoes.csv`, `campanha.json` e as fotos (CSV separado por `;`, abre direto no Excel).
 - **Catálogos**: destinos (laboratórios), prefixo de cada tipo de frasco e parâmetros de campo.
 
-### Códigos dos frascos
-O tipo é reconhecido pelo prefixo do código: `MB-0142` → Microbiologia, `NUT-0088` → Nutrientes.
-Prefixos por omissão: MB, MT, OD, NUT, CHL, SST, FIT, COT (editáveis em Catálogos).
-O QR só precisa de conter o código em texto. Um código desconhecido pede o tipo.
+### Etiquetas dos frascos
+O QR da etiqueta é um endereço com os campos todos (`na` nº amostra, `nf` nº do frasco, `n` parâmetro, `pc` ponto, `dt` data, `fr` frasco, `pl` pré-lavagem, `am` amostra, `de` destino, `rt` rota, `tu` turno…).
+
+- **Nº de amostra = colheita (local).** **Nº = frasco dentro dessa amostra.** Cada frasco fica identificado como `amostra-nº` (ex.: `52617463-6`) e aparece como "nº 6".
+- **Campanha → Ler etiquetas dos frascos**: cada nº de amostra passa a ser uma colheita (nome do ponto e data vêm da etiqueta) e cada frasco entra planeado com tipo, destino, pré-lavagem e volume.
+- À mão, dentro de uma colheita, basta escrever o **nº do frasco** (ex.: `6`).
+- O tipo vem do parâmetro (`n`, ex.: SST). Um parâmetro novo pede o tipo uma vez e fica associado (Catálogos).
+- Uma etiqueta com **outro nº de amostra** dá aviso de frasco trocado e não é aceite.
+- Os destinos (`de`) entram sozinhos na lista de destinos.
 
 ## Cuidados importantes
 

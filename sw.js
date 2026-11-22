@@ -1,6 +1,6 @@
 // Service worker: guarda a app para abrir sem rede.
 // Ao publicar uma versão nova, mude VERSAO para os telemóveis a atualizarem.
-const VERSAO = 'colheitas-v1';
+const VERSAO = 'colheitas-v3';
 const FICHEIROS = [
   './',
   './index.html',
